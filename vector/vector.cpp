@@ -12,7 +12,7 @@ class Vector {
         // Doubles the capacity of the vector
         void expand_capacity() {
             // Increase the capacity
-            capacity = capacity*2 + 1;
+            capacity = capacity*2;
 
             // Create a temporary array with the increased capacity
             int* tmp = new int[capacity];
@@ -22,12 +22,16 @@ class Vector {
 
             // Swap the pointers of arr and tmp
             swap(arr, tmp);
+
+            delete[] tmp;
         }
     public:
         // Constructor
         Vector(int size): size(size), capacity(size) {
             // CASE 1: size <= 0
-            if (size <= 0) { size = 1; };
+            if (size <= 0) { 
+                throw "Size must be greater than 0";
+            }
 
             arr = new int[capacity] { }; // Sets all elements to 0
         }
@@ -109,7 +113,7 @@ class Vector {
 
         void insert(int idx, int new_value) {
             // CASE 1: idx < 0 OR idx >= size
-            if (idx < 0 || idx >= size) {
+            if (idx < 0 || idx > size) {
                 throw "Index out of bounds!";
             }
 
@@ -130,19 +134,36 @@ class Vector {
             size++;
             
         }
+
+        // Returns the memory capacity allocated for this vector
+        int get_capacity() {
+            return this->capacity;
+        }
 };
 
 
 // Test Code
 int main(){
-    Vector my_vector = Vector(10);
-    my_vector.add(15);
-    my_vector.print();
-    my_vector.insert(1, 25);
-    my_vector.insert(1, 27);
-    my_vector.insert(1, 28);
-    my_vector.insert(1, 29);
-    my_vector.print();
-    cout << my_vector.length();
+    Vector vector_with_ten_elements = Vector(10);
+    Vector vector_with_one_element = Vector(1);
 
+    vector_with_one_element.add(2);
+    vector_with_one_element.add(5);
+    vector_with_one_element.add(6);
+    vector_with_one_element.add(10);
+    vector_with_one_element.print();
+    cout << "Vector with one element size: " << vector_with_one_element.length() << "\n";
+    cout << "Vector with one elements capacity: " << vector_with_one_element.get_capacity() << "\n";
+
+
+    vector_with_ten_elements.insert(0,10);
+    for (int i = 1; i < vector_with_ten_elements.length(); i++) {
+        vector_with_ten_elements.set(i, i);
+    }
+    vector_with_ten_elements.print();
+
+    vector_with_ten_elements.insert(vector_with_ten_elements.length(), 41);
+    vector_with_ten_elements.print();
+    cout << "Vector with ten elements size: " << vector_with_ten_elements.length() << "\n";
+    cout << "Vector with ten elements capacity: " << vector_with_ten_elements.get_capacity() << "\n";
 }
