@@ -12,7 +12,7 @@ class Vector {
         // Doubles the capacity of the vector
         void expand_capacity() {
             // Increase the capacity
-            capacity = capacity*2;
+            capacity = capacity*2 + 1;
 
             // Create a temporary array with the increased capacity
             int* tmp = new int[capacity];
@@ -29,8 +29,8 @@ class Vector {
         // Constructor
         Vector(int size): size(size), capacity(size) {
             // CASE 1: size <= 0
-            if (size <= 0) { 
-                throw "Size must be greater than 0";
+            if (size < 0) { 
+                throw "Size must be greater than or equal to 0";
             }
 
             arr = new int[capacity] { }; // Sets all elements to 0
@@ -139,6 +139,73 @@ class Vector {
         int get_capacity() {
             return this->capacity;
         }
+
+        // HOMEWORK
+        // Rotates the whole array 1 step to the right. So, 0 1 2 3 4 -> 4 0 1 2 3
+        void right_rotate() {
+            int back = this->back();
+
+            // Shift everthing to the right
+            for (int i = size - 1; i > 0; i--) {
+                arr[i] = arr[i-1];
+            }
+
+            this->set(0, back);
+        }
+
+        // Rotates the whole array 1 step to the left. So, 0 1 2 3 4 -> 1 2 3 4 0
+        void left_rotate() {
+            int front = this->front();
+
+            // Shift everything to the left
+            for (int i = 0; i < size - 1; i++) {
+                arr[i] = arr[i+1];
+            }
+
+            this->set(size-1, front);
+        }
+
+        // Rotates the whole array n number of times
+        void right_rotate(int n) {
+            // Naive: Call right_rotate() n number of times
+            int r = n % size;
+            for (int i = 0; i < r; i++) {
+                this->right_rotate();
+            }
+        }
+
+        // Remove the value at the specified index and return the value
+        int pop(int idx) {
+            // CASE 1: idx < 0 OR idx >= size
+            if (idx < 0 || idx >= size) {
+                throw "Index out of bounds!";
+            }
+            int popped_element = arr[idx];
+
+            for (int i = idx; i < size - 1; i++) {
+                arr[i] = arr[i+1];
+            }
+
+            // Reduce the size because you popped an element
+            size--;
+
+            return popped_element;
+        }
+
+        // Search for an element and swap it with the left most element if found, -1 otherwise
+        int find_transposition(int value) {
+            for (int i = 0; i < size-1; i++) {
+                if (arr[i] == value) {
+                    if (i == 0) {
+                        return 0;
+                    } 
+
+                    swap(arr[i], arr[i-1]);
+                    return i - 1;
+                }
+            }
+            return -1;
+        }
 };
 
 
@@ -166,4 +233,60 @@ int main(){
     vector_with_ten_elements.print();
     cout << "Vector with ten elements size: " << vector_with_ten_elements.length() << "\n";
     cout << "Vector with ten elements capacity: " << vector_with_ten_elements.get_capacity() << "\n";
+
+    Vector increasing_vector = Vector(5);
+    for (int i = 0; i < 5; i++) {
+        increasing_vector.set(i, i);
+    }
+    increasing_vector.print();
+    cout << "Above vector right rotated...\n";
+    increasing_vector.right_rotate();
+    increasing_vector.print();
+    cout << "Above vector left rotated...\n";
+    increasing_vector.left_rotate();
+    increasing_vector.print();
+
+    Vector vector_with_three_elements = Vector(3);
+    for (int i = 0; i < 3; i++) {
+        vector_with_three_elements.set(i,i);
+    }
+    vector_with_three_elements.print();
+    vector_with_three_elements.pop(1);
+    cout << "After popping first index: ";
+    vector_with_three_elements.print();
+
+    Vector empty_vector = Vector(0);
+    empty_vector.print();
+    empty_vector.add(1);
+    empty_vector.print();
+    empty_vector.get(0);
+    empty_vector.pop(empty_vector.length()-1);
+    empty_vector.print();
+
+
+    Vector my_vector = Vector(5);
+    for (int i = 0; i < 5; i++) {
+        my_vector.set(i, i);
+    }
+    my_vector.print();
+    cout << "After rotating it once: ";
+    my_vector.right_rotate(1); 
+    my_vector.print();
+    cout << "\n";
+    cout << "After rotating it four more times: ";
+    my_vector.right_rotate(4); 
+    my_vector.print();
+    cout << "\n";
+
+    my_vector.print();
+    cout << "\n";
+    cout << "Transposition(3): " << my_vector.find_transposition(3) << "\n";
+    my_vector.print();
+    cout << "\nAgain...\nTransposition(3): " << my_vector.find_transposition(3) << "\n";
+    my_vector.print();
+    cout << "\nAgain...\nTransposition(3): " << my_vector.find_transposition(3) << "\n";
+    my_vector.print();
+    cout << "\nAgain...\nTransposition(3): " << my_vector.find_transposition(3) << "\n";
+    my_vector.print();
+    cout << "\n";
 }
